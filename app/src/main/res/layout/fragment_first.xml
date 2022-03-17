@@ -52,5 +52,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_user_input" />
 
+    <TextView
+        android:id="@+id/tv_user_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@android:color/holo_red_dark"
+        android:text="@string/user_missing_warning"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@id/et_user_input"
+        app:layout_constraintTop_toBottomOf="@id/et_user_input"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
