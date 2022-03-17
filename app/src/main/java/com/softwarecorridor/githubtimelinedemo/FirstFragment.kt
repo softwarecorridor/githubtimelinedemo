@@ -38,8 +38,7 @@ class FirstFragment : Fragment() {
     ): View? {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
-        binding.etUserInput.addTextChangedListener{
-            text ->
+        binding.etUserInput.addTextChangedListener { text ->
             _binding?.tvUserWarning?.visibility = View.INVISIBLE
         }
         binding.buttonFirst.setOnClickListener { view: View? ->
@@ -54,9 +53,10 @@ class FirstFragment : Fragment() {
                     Request.Method.GET, "$prefix$userInput",
                     { response ->
                         val avatarURL = parseVolleyResponseForAvatarUrl(response)
-                        view?.findNavController()?.navigate(R.id.action_FirstFragment_to_graphFragment,
+                        view?.findNavController()?.navigate(
+                            R.id.action_FirstFragment_to_graphFragment,
                             bundleOf("name" to userInput.toString(), "avatar_url" to avatarURL)
-                            )
+                        )
                     }) {
                     parseVolleyError(it)
                 }
@@ -69,7 +69,7 @@ class FirstFragment : Fragment() {
         return binding.root
     }
 
-    private fun parseVolleyResponseForAvatarUrl(response: String) : String{
+    private fun parseVolleyResponseForAvatarUrl(response: String): String {
         val data = JSONObject(response)
         val avatarUrl = data.getString("avatar_url")
         Log.d(TAG, avatarUrl)
