@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
@@ -52,7 +54,9 @@ class FirstFragment : Fragment() {
                     Request.Method.GET, "$prefix$userInput",
                     { response ->
                         val avatarURL = parseVolleyResponseForAvatarUrl(response)
-                        // send over $userInput and avatar_url
+                        view?.findNavController()?.navigate(R.id.action_FirstFragment_to_graphFragment,
+                            bundleOf("name" to userInput.toString(), "avatar_url" to avatarURL)
+                            )
                     }) {
                     parseVolleyError(it)
                 }

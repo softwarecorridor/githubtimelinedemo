@@ -9,5 +9,20 @@
         android:id="@+id/FirstFragment"
         android:name="com.softwarecorridor.githubtimelinedemo.FirstFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first"/>
+        tools:layout="@layout/fragment_first">
+        <action
+            android:id="@+id/action_FirstFragment_to_graphFragment"
+            app:destination="@id/GraphFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/GraphFragment"
+        android:name="com.softwarecorridor.githubtimelinedemo.GraphFragment"
+        android:label="GraphFragment">
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="avatar_url"
+            app:argType="string" />
+    </fragment>
 </navigation>
