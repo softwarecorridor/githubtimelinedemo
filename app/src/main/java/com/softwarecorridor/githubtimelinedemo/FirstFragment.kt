@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.android.volley.Request
 import com.android.volley.VolleyError
@@ -35,7 +36,10 @@ class FirstFragment : Fragment() {
     ): View? {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
-
+        binding.etUserInput.addTextChangedListener{
+            text ->
+            _binding?.tvUserWarning?.visibility = View.INVISIBLE
+        }
         binding.buttonFirst.setOnClickListener { view: View? ->
 
             val textBox: EditText? = this.activity?.findViewById(R.id.et_user_input)
@@ -66,6 +70,7 @@ class FirstFragment : Fragment() {
             val data = JSONObject(responseBody)
             val message = data.getString("message")
             Log.d(TAG, message)
+            _binding?.tvUserWarning?.visibility = View.VISIBLE
         } catch (e: JSONException) {
             Log.e(TAG, "parseVolleyError", e)
         }
