@@ -50,8 +50,9 @@ class FirstFragment : Fragment() {
                 val prefix = "https://api.github.com/users/"
                 val stringRequest = StringRequest(
                     Request.Method.GET, "$prefix$userInput",
-                    { response -> // Display the first 500 characters of the response string.
-                        Log.d(TAG, "Response is: " + response.substring(0, 100))
+                    { response ->
+                        val avatarURL = parseVolleyResponseForAvatarUrl(response)
+                        // send over $userInput and avatar_url
                     }) {
                     parseVolleyError(it)
                 }
@@ -62,6 +63,13 @@ class FirstFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun parseVolleyResponseForAvatarUrl(response: String) : String{
+        val data = JSONObject(response)
+        val avatarUrl = data.getString("avatar_url")
+        Log.d(TAG, avatarUrl)
+        return avatarUrl
     }
 
     private fun parseVolleyError(error: VolleyError) {
