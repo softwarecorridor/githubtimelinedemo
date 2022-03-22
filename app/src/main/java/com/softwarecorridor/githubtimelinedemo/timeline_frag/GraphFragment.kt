@@ -1,4 +1,4 @@
-package com.softwarecorridor.githubtimelinedemo
+package com.softwarecorridor.githubtimelinedemo.timeline_frag
 
 import android.os.Bundle
 import android.util.Log

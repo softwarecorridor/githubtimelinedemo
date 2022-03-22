@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/GraphFragment"
-        android:name="com.softwarecorridor.githubtimelinedemo.GraphFragment"
+        android:name="com.softwarecorridor.githubtimelinedemo.timeline_frag.GraphFragment"
         android:label="GraphFragment">
         <argument
             android:name="name"
