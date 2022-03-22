@@ -5,14 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import com.android.volley.Request
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.VolleyError
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.softwarecorridor.githubtimelinedemo.databinding.FragmentFirstBinding
 import com.softwarecorridor.githubtimelinedemo.databinding.FragmentGraphBinding
 import org.json.JSONException
 import org.json.JSONObject
@@ -27,6 +23,10 @@ class GraphFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private lateinit var mAdapter: TimeLineAdapter
+    private val mDataList = ArrayList<RepoModel>()
+    private lateinit var mLayoutManager: LinearLayoutManager
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,42 +34,28 @@ class GraphFragment : Fragment() {
         val name = arguments?.getString("name")
         val avatarUrl = arguments?.getString("avatar_url")
 
-//display name and icon at the top
+        //TODO: display name and icon at the top
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
-//        binding.etUserInput.addTextChangedListener{
-//                text ->
-//            _binding?.tvUserWarning?.visibility = View.INVISIBLE
-//        }
-//        binding.buttonFirst.setOnClickListener { view: View? ->
-//
-//            val textBox: EditText? = this.activity?.findViewById(R.id.et_user_input)
-//            if (textBox != null) {
-//                val userInput = textBox.text
-//                Log.d(TAG, "string: $userInput")
-//                val queue = Volley.newRequestQueue(context)
-//                val prefix = "https://api.github.com/users/"
-//                val suffix = "/repos"
-//
-//
-////                its an jsonarray
-////                each item:
-////                  name
-////                  description
-////                  created_at
-//                val stringRequest = StringRequest(
-//                    Request.Method.GET, "$prefix$userInput$suffix",
-//                    { response -> // Display the first 500 characters of the response string.
-//                        Log.d(TAG, "Response is: " + response.substring(0, 100))
-//                    }) {
-//                    parseVolleyError(it)
-//                }
-//                queue.add(stringRequest)
-//            } else {
-//                Log.d(TAG, "text box is null for some reason")
-//            }
-//        }
-//
+
+        setUpTest()
+        initRecyclerListView(_binding?.recyclerView)
+
         return binding.root
+    }
+
+    private fun initRecyclerListView(recyclerView: RecyclerView?) {
+        if (recyclerView != null) {
+            mLayoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            recyclerView.layoutManager = mLayoutManager
+            mAdapter = TimeLineAdapter(mDataList)
+            recyclerView.adapter = mAdapter
+        }
+    }
+
+    private fun setUpTest() {
+        mDataList.add(RepoModel("Test 1", "Just test 1"))
+        mDataList.add(RepoModel("Test 2", "Just test 2"))
+        mDataList.add(RepoModel("Test 3", "Just test 3"))
     }
 
     private fun parseVolleyError(error: VolleyError) {
@@ -78,7 +64,6 @@ class GraphFragment : Fragment() {
             val data = JSONObject(responseBody)
             val message = data.getString("message")
             Log.d(TAG, message)
-            _binding?.tvUserWarning?.visibility = View.VISIBLE
         } catch (e: JSONException) {
             Log.e(TAG, "parseVolleyError", e)
         }
