@@ -10,21 +10,22 @@ import com.softwarecorridor.githubtimelinedemo.R
 
 
 //https://developer.android.com/guide/topics/ui/layout/recyclerview
-class TimeLineAdapter(private val repoList : ArrayList<RepoModel>) : RecyclerView.Adapter<TimeLineAdapter.TimeLineViewHolder>(){
-//    private lateinit var mLayoutInflater: LayoutInflater
+class TimeLineAdapter() : RecyclerView.Adapter<TimeLineAdapter.TimeLineViewHolder>(){
+    var repositories  = ArrayList<RepoModel>()
 
     class TimeLineViewHolder(itemView: View, viewType: Int) : RecyclerView.ViewHolder(itemView) {
-        val name : TextView
-        val description : TextView
-        val timeline : TimelineView
+        val name : TextView = itemView.findViewById(R.id.item_name)
+        val description : TextView = itemView.findViewById(R.id.item_description)
+        val timeline : TimelineView = itemView.findViewById(R.id.item_timeline)
 
         init {
-            name = itemView.findViewById(R.id.item_name)
-            description = itemView.findViewById(R.id.item_description)
-            timeline = itemView.findViewById(R.id.item_timeline)
-
             timeline.initLine(viewType)
         }
+    }
+
+    fun updateRepoList(repoList : ArrayList<RepoModel>) {
+        repositories = repoList
+        notifyDataSetChanged()
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -46,7 +47,7 @@ class TimeLineAdapter(private val repoList : ArrayList<RepoModel>) : RecyclerVie
     }
 
     override fun onBindViewHolder(holder: TimeLineViewHolder, position: Int) {
-        val model = repoList[position]
+        val model = repositories[position]
 
         holder.name.text = model.name
         holder.description.text = model.description
@@ -56,7 +57,7 @@ class TimeLineAdapter(private val repoList : ArrayList<RepoModel>) : RecyclerVie
 //        holder.timeline.marker = VectorDrawableUtils.getDrawable(holder.itemView.context, drawableResId, ContextCompat.getColor(holder.itemView.context, colorFilter))
 //    }
 
-    override fun getItemCount() = repoList.size
+    override fun getItemCount() = repositories.size
 
 
 }
