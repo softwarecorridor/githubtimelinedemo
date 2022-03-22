@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
@@ -36,8 +38,7 @@ class FirstFragment : Fragment() {
     ): View? {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
-        binding.etUserInput.addTextChangedListener{
-            text ->
+        binding.etUserInput.addTextChangedListener { text ->
             _binding?.tvUserWarning?.visibility = View.INVISIBLE
         }
         binding.buttonFirst.setOnClickListener { view: View? ->
@@ -50,8 +51,12 @@ class FirstFragment : Fragment() {
                 val prefix = "https://api.github.com/users/"
                 val stringRequest = StringRequest(
                     Request.Method.GET, "$prefix$userInput",
-                    { response -> // Display the first 500 characters of the response string.
-                        Log.d(TAG, "Response is: " + response.substring(0, 100))
+                    { response ->
+                        val avatarURL = parseVolleyResponseForAvatarUrl(response)
+                        view?.findNavController()?.navigate(
+                            R.id.action_FirstFragment_to_graphFragment,
+                            bundleOf("name" to userInput.toString(), "avatar_url" to avatarURL)
+                        )
                     }) {
                     parseVolleyError(it)
                 }
@@ -62,6 +67,13 @@ class FirstFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun parseVolleyResponseForAvatarUrl(response: String): String {
+        val data = JSONObject(response)
+        val avatarUrl = data.getString("avatar_url")
+        Log.d(TAG, avatarUrl)
+        return avatarUrl
     }
 
     private fun parseVolleyError(error: VolleyError) {
