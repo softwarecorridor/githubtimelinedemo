@@ -52,10 +52,11 @@ class FirstFragment : Fragment() {
                 val stringRequest = StringRequest(
                     Request.Method.GET, "$prefix$userInput",
                     { response ->
-                        val avatarURL = parseVolleyResponseForAvatarUrl(response)
+                        val responses = parseVolleyResponse(response)
+                        responses.putString("name", userInput.toString())
                         view?.findNavController()?.navigate(
                             R.id.action_FirstFragment_to_graphFragment,
-                            bundleOf("name" to userInput.toString(), "avatar_url" to avatarURL)
+                            responses
                         )
                     }) {
                     parseVolleyError(it)
@@ -69,11 +70,12 @@ class FirstFragment : Fragment() {
         return binding.root
     }
 
-    private fun parseVolleyResponseForAvatarUrl(response: String): String {
+    private fun parseVolleyResponse(response: String): Bundle {
         val data = JSONObject(response)
-        val avatarUrl = data.getString("avatar_url")
-        Log.d(TAG, avatarUrl)
-        return avatarUrl
+        return bundleOf(
+            "avatar_url" to data.getString("avatar_url"),
+            "repos_url" to data.getString("repos_url")
+        )
     }
 
     private fun parseVolleyError(error: VolleyError) {

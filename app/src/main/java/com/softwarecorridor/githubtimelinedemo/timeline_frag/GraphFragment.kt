@@ -8,8 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
 import com.android.volley.VolleyError
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.softwarecorridor.githubtimelinedemo.databinding.FragmentGraphBinding
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
@@ -33,11 +37,26 @@ class GraphFragment : Fragment() {
     ): View? {
         val name = arguments?.getString("name")
         val avatarUrl = arguments?.getString("avatar_url")
+        val reposUrl = arguments?.getString("repos_url")
+
+
+        val queue = Volley.newRequestQueue(context)
+        val prefix = "https://api.github.com/users/"
+        val stringRequest = StringRequest(
+            Request.Method.GET, reposUrl,
+            { response ->
+                val repos = parseVolleyResponse(response)
+                if (mAdapter != null) {
+                    mAdapter.updateRepoList(repos)
+                }
+            }) {
+            parseVolleyError(it)
+        }
+        queue.add(stringRequest)
 
         //TODO: display name and icon at the top
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
-        setUpTest()
         initRecyclerListView(_binding?.recyclerView)
 
         return binding.root
@@ -47,16 +66,25 @@ class GraphFragment : Fragment() {
         if (recyclerView != null) {
             mLayoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             recyclerView.layoutManager = mLayoutManager
-            mAdapter = TimeLineAdapter(mDataList)
+            mAdapter = TimeLineAdapter()
             recyclerView.adapter = mAdapter
         }
     }
 
-    private fun setUpTest() {
-        mDataList.add(RepoModel("Test 1", "Just test 1"))
-        mDataList.add(RepoModel("Test 2", "Just test 2"))
-        mDataList.add(RepoModel("Test 3", "Just test 3"))
+
+    private fun parseVolleyResponse(response: String): ArrayList<RepoModel> {
+        val list = ArrayList<RepoModel>()
+
+        val data = JSONArray(response)
+        for (i in 0 until data.length()) {
+            val repoData = data.getJSONObject(i)
+            list.add(RepoModel(repoData.getString("name"),
+                repoData.getString("description")))
+        }
+
+        return list
     }
+
 
     private fun parseVolleyError(error: VolleyError) {
         try {
