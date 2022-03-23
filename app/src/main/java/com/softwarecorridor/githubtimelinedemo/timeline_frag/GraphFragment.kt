@@ -47,6 +47,7 @@ class GraphFragment : Fragment() {
             { response ->
                 val repos = parseVolleyResponse(response)
                 if (mAdapter != null) {
+
                     mAdapter.updateRepoList(repos)
                 }
             }) {
@@ -78,8 +79,14 @@ class GraphFragment : Fragment() {
         val data = JSONArray(response)
         for (i in 0 until data.length()) {
             val repoData = data.getJSONObject(i)
-            list.add(RepoModel(repoData.getString("name"),
-                repoData.getString("description")))
+            list.add(
+                RepoModel(
+                    repoData.getString("name"),
+                    repoData.getString("description"),
+                    repoData.getString("created_at"),
+                    repoData.getString("updated_at")
+                )
+            )
         }
 
         return list
