@@ -47,8 +47,8 @@ class GraphFragment : Fragment() {
             { response ->
                 val repos = parseVolleyResponse(response)
                 if (mAdapter != null) {
-
-                    mAdapter.updateRepoList(repos)
+                    val sortedRepo =  repos.sortedWith(compareBy({it.createTime}));
+                    mAdapter.updateRepoList(sortedRepo)
                 }
             }) {
             parseVolleyError(it)
