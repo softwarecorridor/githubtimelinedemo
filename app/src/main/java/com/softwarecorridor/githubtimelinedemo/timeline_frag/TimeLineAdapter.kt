@@ -8,10 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.vipulasri.timelineview.TimelineView
 import com.softwarecorridor.githubtimelinedemo.R
 
-
-//https://developer.android.com/guide/topics/ui/layout/recyclerview
 class TimeLineAdapter() : RecyclerView.Adapter<TimeLineAdapter.TimeLineViewHolder>(){
-    var repositories  = ArrayList<RepoModel>()
+    var repositories : List<RepoModel> = ArrayList()
 
     class TimeLineViewHolder(itemView: View, viewType: Int) : RecyclerView.ViewHolder(itemView) {
         val name : TextView = itemView.findViewById(R.id.item_name)
@@ -23,7 +21,7 @@ class TimeLineAdapter() : RecyclerView.Adapter<TimeLineAdapter.TimeLineViewHolde
         }
     }
 
-    fun updateRepoList(repoList : ArrayList<RepoModel>) {
+    fun updateRepoList(repoList : List<RepoModel>) {
         repositories = repoList
         notifyDataSetChanged()
     }
