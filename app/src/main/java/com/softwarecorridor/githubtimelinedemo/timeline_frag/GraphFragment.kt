@@ -19,7 +19,7 @@ import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 
 private const val TAG = "GraphFragment"
-
+// TODO: https://medium.com/google-developers/introduction-to-motionlayout-part-iii-47cd64d51a5
 class GraphFragment : Fragment() {
     private var _binding: FragmentGraphBinding? = null
 
@@ -35,25 +35,29 @@ class GraphFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
         val name = arguments?.getString("name")
         val avatarUrl = arguments?.getString("avatar_url")
         val reposUrl = arguments?.getString("repos_url")
 
-
-        val queue = Volley.newRequestQueue(context)
-        val prefix = "https://api.github.com/users/"
-        val stringRequest = StringRequest(
-            Request.Method.GET, reposUrl,
-            { response ->
-                val repos = parseVolleyResponse(response)
-                if (mAdapter != null) {
-                    val sortedRepo =  repos.sortedWith(compareBy({it.createTime}));
-                    mAdapter.updateRepoList(sortedRepo)
-                }
-            }) {
-            parseVolleyError(it)
+        if (reposUrl != null) {
+            val queue = Volley.newRequestQueue(context)
+            val prefix = "https://api.github.com/users/"
+            val stringRequest = StringRequest(
+                Request.Method.GET, reposUrl,
+                { response ->
+                    val repos = parseVolleyResponse(response)
+                    if (mAdapter != null) {
+                        val sortedRepo =  repos.sortedWith(compareBy({it.createTime}));
+                        mAdapter.updateRepoList(sortedRepo)
+                    }
+                }) {
+                parseVolleyError(it)
+            }
+            queue.add(stringRequest)
         }
-        queue.add(stringRequest)
+
 
         //TODO: display name and icon at the top
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
