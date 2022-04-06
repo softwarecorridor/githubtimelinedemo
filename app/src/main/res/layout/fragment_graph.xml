@@ -17,17 +17,11 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.appbar.AppBarLayout
-        android:layout_height="192dp"
-        android:layout_width="match_parent">
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-            <androidx.appcompat.widget.Toolbar
-                android:layout_height="?attr/actionBarSize"
-                android:layout_width="match_parent"
-                app:layout_collapseMode="pin"/>
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        android:layout_height="200dp"
+        android:layout_width="match_parent"
+        android:background="@color/purple_200">
+
+        <include layout="@layout/coordinatorlayout_graph_toolbar" />
     </com.google.android.material.appbar.AppBarLayout>
 
 
