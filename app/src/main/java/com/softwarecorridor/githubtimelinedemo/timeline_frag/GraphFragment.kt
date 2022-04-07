@@ -5,20 +5,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.softwarecorridor.githubtimelinedemo.R
 import com.softwarecorridor.githubtimelinedemo.databinding.FragmentGraphBinding
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 
+
 private const val TAG = "GraphFragment"
+
 // TODO: https://medium.com/google-developers/introduction-to-motionlayout-part-iii-47cd64d51a5
 class GraphFragment : Fragment() {
     private var _binding: FragmentGraphBinding? = null
@@ -49,7 +55,7 @@ class GraphFragment : Fragment() {
                 { response ->
                     val repos = parseVolleyResponse(response)
                     if (mAdapter != null) {
-                        val sortedRepo =  repos.sortedWith(compareBy({it.createTime}));
+                        val sortedRepo = repos.sortedWith(compareBy({ it.createTime }));
                         mAdapter.updateRepoList(sortedRepo)
                     }
                 }) {
@@ -61,6 +67,19 @@ class GraphFragment : Fragment() {
 
         //TODO: display name and icon at the top
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
+
+        _binding?.appbarLayout?.findViewById<ImageButton>(R.id.backButton)
+            ?.setOnClickListener { findNavController().navigate(R.id.action_GraphFragment_to_FirstFragment) }
+
+
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true /* enabled by default */) {
+                override fun handleOnBackPressed() {
+                    // Handle the back button event
+                    findNavController().navigate(R.id.action_GraphFragment_to_FirstFragment)
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(this.viewLifecycleOwner, callback)
 
         initRecyclerListView(_binding?.recyclerView)
 

@@ -24,5 +24,8 @@
         <argument
             android:name="avatar_url"
             app:argType="string" />
+        <action
+            android:id="@+id/action_GraphFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
     </fragment>
 </navigation>
