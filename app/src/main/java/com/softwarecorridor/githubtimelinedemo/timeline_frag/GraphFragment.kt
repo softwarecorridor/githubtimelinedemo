@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -47,6 +48,10 @@ class GraphFragment : Fragment() {
         val avatarUrl = arguments?.getString("avatar_url")
         val reposUrl = arguments?.getString("repos_url")
 
+
+
+
+
         if (reposUrl != null) {
             val queue = Volley.newRequestQueue(context)
             val prefix = "https://api.github.com/users/"
@@ -57,6 +62,8 @@ class GraphFragment : Fragment() {
                     if (mAdapter != null) {
                         val sortedRepo = repos.sortedWith(compareBy({ it.createTime }));
                         mAdapter.updateRepoList(sortedRepo)
+
+
                     }
                 }) {
                 parseVolleyError(it)
@@ -68,9 +75,12 @@ class GraphFragment : Fragment() {
         //TODO: display name and icon at the top
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
+        _binding?.appbarLayout?.findViewById<TextView>(R.id.nameTextView)
+            ?.text = name
+
         _binding?.appbarLayout?.findViewById<ImageButton>(R.id.backButton)
             ?.setOnClickListener { findNavController().navigate(R.id.action_GraphFragment_to_FirstFragment) }
-
+        
 
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true /* enabled by default */) {
