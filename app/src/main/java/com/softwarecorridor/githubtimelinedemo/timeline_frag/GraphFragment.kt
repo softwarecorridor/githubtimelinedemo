@@ -1,7 +1,9 @@
 package com.softwarecorridor.githubtimelinedemo.timeline_frag
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
+import android.util.LruCache
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.VolleyError
+import com.android.volley.toolbox.ImageLoader
+import com.android.volley.toolbox.NetworkImageView
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.softwarecorridor.githubtimelinedemo.R
@@ -26,7 +30,6 @@ import java.nio.charset.StandardCharsets
 
 private const val TAG = "GraphFragment"
 
-// TODO: https://medium.com/google-developers/introduction-to-motionlayout-part-iii-47cd64d51a5
 class GraphFragment : Fragment() {
     private var _binding: FragmentGraphBinding? = null
 
@@ -42,15 +45,11 @@ class GraphFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
         val name = arguments?.getString("name")
         val avatarUrl = arguments?.getString("avatar_url")
         val reposUrl = arguments?.getString("repos_url")
-
-
-
-
 
         if (reposUrl != null) {
             val queue = Volley.newRequestQueue(context)
@@ -71,16 +70,39 @@ class GraphFragment : Fragment() {
             queue.add(stringRequest)
         }
 
+        if (avatarUrl != null) {
+
+            val queue = Volley.newRequestQueue(context)
+            val mImageLoader = ImageLoader(queue,
+                object : ImageLoader.ImageCache {
+                    private val cache: LruCache<String, Bitmap> = LruCache<String, Bitmap>(20)
+                    override fun getBitmap(url: String): Bitmap? {
+                        return cache.get(url)
+                    }
+
+                    override fun putBitmap(url: String, bitmap: Bitmap) {
+                        cache.put(url, bitmap)
+                    }
+                })
+
+
+            val imageView = _binding?.appbarLayout?.findViewById<NetworkImageView>(R.id.imageView)
+            mImageLoader.get(avatarUrl, ImageLoader.getImageListener(imageView,
+                R.drawable.ic_launcher_background, android.R.drawable
+                    .ic_dialog_alert));
+            imageView?.setImageUrl(avatarUrl, mImageLoader);
+        }
+
 
         //TODO: display name and icon at the top
-        _binding = FragmentGraphBinding.inflate(inflater, container, false)
+
 
         _binding?.appbarLayout?.findViewById<TextView>(R.id.nameTextView)
             ?.text = name
 
         _binding?.appbarLayout?.findViewById<ImageButton>(R.id.backButton)
             ?.setOnClickListener { findNavController().navigate(R.id.action_GraphFragment_to_FirstFragment) }
-        
+
 
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true /* enabled by default */) {
