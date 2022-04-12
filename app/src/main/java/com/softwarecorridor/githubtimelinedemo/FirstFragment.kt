@@ -72,10 +72,18 @@ class FirstFragment : Fragment() {
 
     private fun parseVolleyResponse(response: String): Bundle {
         val data = JSONObject(response)
-        return bundleOf(
-            "avatar_url" to data.getString("avatar_url"),
-            "repos_url" to data.getString("repos_url")
-        )
+        val bundle = Bundle()
+        bundle.putString("avatar_url", data.getString("avatar_url"))
+        bundle.putString("repos_url", data.getString("repos_url"))
+        val email = data.getString("email")
+        if (email != "null") {
+            bundle.putString("email", email)
+        }
+        val location = data.getString("location")
+        if (location != "null") {
+            bundle.putString("location", location)
+        }
+        return bundle
     }
 
     private fun parseVolleyError(error: VolleyError) {

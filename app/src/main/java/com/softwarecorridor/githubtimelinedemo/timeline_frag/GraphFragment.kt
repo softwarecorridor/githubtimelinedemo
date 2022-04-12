@@ -48,6 +48,8 @@ class GraphFragment : Fragment() {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
         val name = arguments?.getString("name")
+        val email = arguments?.getString("email")
+        val location = arguments?.getString("location")
         val avatarUrl = arguments?.getString("avatar_url")
         val reposUrl = arguments?.getString("repos_url")
 
@@ -99,6 +101,19 @@ class GraphFragment : Fragment() {
 
         _binding?.appbarLayout?.findViewById<TextView>(R.id.nameTextView)
             ?.text = name
+
+        if (location != null) {
+            _binding?.appbarLayout?.findViewById<TextView>(R.id.locationTextView)?.text = location
+        } else {
+            _binding?.appbarLayout?.findViewById<TextView>(R.id.locationTextView)?.visibility = View.GONE
+        }
+
+        if (email != null) {
+            _binding?.appbarLayout?.findViewById<TextView>(R.id.emailTextView)?.text = email
+        } else {
+            _binding?.appbarLayout?.findViewById<TextView>(R.id.emailTextView)?.visibility = View.GONE
+        }
+
 
         _binding?.appbarLayout?.findViewById<ImageButton>(R.id.backButton)
             ?.setOnClickListener { findNavController().navigate(R.id.action_GraphFragment_to_FirstFragment) }
