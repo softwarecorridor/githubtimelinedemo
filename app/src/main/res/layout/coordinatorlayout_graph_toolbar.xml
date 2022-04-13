@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     android:minHeight="50dp"
     android:fitsSystemWindows="false"
-    app:layout_scrollFlags="scroll|enterAlways|snap|exitUntilCollapsed">
+    app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
     <ImageButton
         android:id="@+id/backButton"
