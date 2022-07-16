@@ -22,6 +22,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.softwarecorridor.githubtimelinedemo.R
 import com.softwarecorridor.githubtimelinedemo.databinding.FragmentGraphBinding
+import com.softwarecorridor.githubtimelinedemo.network.VolleySingleton
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -52,9 +53,9 @@ class GraphFragment : Fragment() {
         val location = arguments?.getString("location")
         val avatarUrl = arguments?.getString("avatar_url")
         val reposUrl = arguments?.getString("repos_url")
+        val volley = VolleySingleton.getInstance(requireContext().applicationContext)
 
         if (reposUrl != null) {
-            val queue = Volley.newRequestQueue(context)
             val prefix = "https://api.github.com/users/"
             val stringRequest = StringRequest(
                 Request.Method.GET, reposUrl,
@@ -69,30 +70,15 @@ class GraphFragment : Fragment() {
                 }) {
                 parseVolleyError(it)
             }
-            queue.add(stringRequest)
+            volley.addToRequestQueue(stringRequest)
         }
 
         if (avatarUrl != null) {
-
-            val queue = Volley.newRequestQueue(context)
-            val mImageLoader = ImageLoader(queue,
-                object : ImageLoader.ImageCache {
-                    private val cache: LruCache<String, Bitmap> = LruCache<String, Bitmap>(20)
-                    override fun getBitmap(url: String): Bitmap? {
-                        return cache.get(url)
-                    }
-
-                    override fun putBitmap(url: String, bitmap: Bitmap) {
-                        cache.put(url, bitmap)
-                    }
-                })
-
-
             val imageView = _binding?.appbarLayout?.findViewById<NetworkImageView>(R.id.imageView)
-            mImageLoader.get(avatarUrl, ImageLoader.getImageListener(imageView,
+            volley.imageLoader.get(avatarUrl, ImageLoader.getImageListener(imageView,
                 R.drawable.ic_launcher_background, android.R.drawable
                     .ic_dialog_alert));
-            imageView?.setImageUrl(avatarUrl, mImageLoader);
+            imageView?.setImageUrl(avatarUrl, volley.imageLoader);
         }
 
 

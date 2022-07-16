@@ -15,6 +15,7 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.softwarecorridor.githubtimelinedemo.databinding.FragmentFirstBinding
+import com.softwarecorridor.githubtimelinedemo.network.VolleySingleton
 import org.json.JSONException
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
@@ -47,7 +48,6 @@ class FirstFragment : Fragment() {
             if (textBox != null) {
                 val userInput = textBox.text
                 Log.d(TAG, "string: $userInput")
-                val queue = Volley.newRequestQueue(context)
                 val prefix = "https://api.github.com/users/"
                 val stringRequest = StringRequest(
                     Request.Method.GET, "$prefix$userInput",
@@ -61,7 +61,7 @@ class FirstFragment : Fragment() {
                     }) {
                     parseVolleyError(it)
                 }
-                queue.add(stringRequest)
+                VolleySingleton.getInstance(requireContext().applicationContext).addToRequestQueue(stringRequest)
             } else {
                 Log.d(TAG, "text box is null for some reason")
             }
