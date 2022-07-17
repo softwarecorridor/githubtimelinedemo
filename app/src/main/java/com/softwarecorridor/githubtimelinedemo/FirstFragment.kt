@@ -5,15 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import androidx.core.os.bundleOf
+import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.softwarecorridor.githubtimelinedemo.databinding.FragmentFirstBinding
 import com.softwarecorridor.githubtimelinedemo.network.VolleySingleton
 import org.json.JSONException
@@ -42,32 +42,53 @@ class FirstFragment : Fragment() {
         binding.etUserInput.addTextChangedListener { text ->
             _binding?.tvUserWarning?.visibility = View.INVISIBLE
         }
+
+        binding.etUserInput.setOnEditorActionListener { tv: TextView?, actionId: Int, _ ->
+            return@setOnEditorActionListener when (actionId) {
+                EditorInfo.IME_ACTION_GO -> {
+                    if (tv != null) {
+                        val userInput = tv.text
+                        performUserQuery(userInput.toString())
+                    } else {
+                        Log.d(TAG, "text box is null for some reason")
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+
         binding.buttonFirst.setOnClickListener { view: View? ->
 
             val textBox: EditText? = this.activity?.findViewById(R.id.et_user_input)
             if (textBox != null) {
                 val userInput = textBox.text
-                Log.d(TAG, "string: $userInput")
-                val prefix = "https://api.github.com/users/"
-                val stringRequest = StringRequest(
-                    Request.Method.GET, "$prefix$userInput",
-                    { response ->
-                        val responses = parseVolleyResponse(response)
-                        responses.putString("name", userInput.toString())
-                        view?.findNavController()?.navigate(
-                            R.id.action_FirstFragment_to_graphFragment,
-                            responses
-                        )
-                    }) {
-                    parseVolleyError(it)
-                }
-                VolleySingleton.getInstance(requireContext().applicationContext).addToRequestQueue(stringRequest)
+                performUserQuery(userInput.toString())
             } else {
                 Log.d(TAG, "text box is null for some reason")
             }
         }
 
         return binding.root
+    }
+
+    private fun performUserQuery(userInput: String) {
+        Log.d(TAG, "string: $userInput")
+        val prefix = "https://api.github.com/users/"
+        val stringRequest = StringRequest(
+            Request.Method.GET, "$prefix$userInput",
+            { response ->
+                val responses = parseVolleyResponse(response)
+                responses.putString("name", userInput)
+                view?.findNavController()?.navigate(
+                    R.id.action_FirstFragment_to_graphFragment,
+                    responses
+                )
+            }) {
+            parseVolleyError(it)
+        }
+        VolleySingleton.getInstance(requireContext().applicationContext)
+            .addToRequestQueue(stringRequest)
     }
 
     private fun parseVolleyResponse(response: String): Bundle {
