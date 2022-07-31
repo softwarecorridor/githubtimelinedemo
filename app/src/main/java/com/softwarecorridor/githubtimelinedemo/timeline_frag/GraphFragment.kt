@@ -1,9 +1,6 @@
 package com.softwarecorridor.githubtimelinedemo.timeline_frag
 
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
-import android.util.LruCache
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,19 +13,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.Request
-import com.android.volley.VolleyError
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.NetworkImageView
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.softwarecorridor.githubtimelinedemo.R
 import com.softwarecorridor.githubtimelinedemo.databinding.FragmentGraphBinding
 import com.softwarecorridor.githubtimelinedemo.network.VolleySingleton
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
-import java.nio.charset.StandardCharsets
 
 
 private const val TAG = "GraphFragment"
@@ -68,13 +57,15 @@ class GraphFragment : Fragment() {
         if (location != null) {
             _binding?.appbarLayout?.findViewById<TextView>(R.id.locationTextView)?.text = location
         } else {
-            _binding?.appbarLayout?.findViewById<TextView>(R.id.locationTextView)?.visibility = View.GONE
+            _binding?.appbarLayout?.findViewById<TextView>(R.id.locationTextView)?.visibility =
+                View.GONE
         }
 
         if (email != null) {
             _binding?.appbarLayout?.findViewById<TextView>(R.id.emailTextView)?.text = email
         } else {
-            _binding?.appbarLayout?.findViewById<TextView>(R.id.emailTextView)?.visibility = View.GONE
+            _binding?.appbarLayout?.findViewById<TextView>(R.id.emailTextView)?.visibility =
+                View.GONE
         }
 
 
@@ -96,17 +87,26 @@ class GraphFragment : Fragment() {
 
         if (reposUrl != null) {
             // TODO: handle null better
-            val timelineViewModel : TimeLineViewModel by viewModels { TimeLineViewModelFactory(volley, reposUrl) }
-            timelineViewModel.getRepos().observe(this, Observer<List<RepoModel>>{
-                    list -> mAdapter.updateRepoList(list)
+            val timelineViewModel: TimeLineViewModel by viewModels {
+                TimeLineViewModelFactory(
+                    volley,
+                    reposUrl
+                )
+            }
+            timelineViewModel.getRepos().observe(this, Observer<List<RepoModel>> { list ->
+                mAdapter.updateRepoList(list)
             })
         }
 
         if (avatarUrl != null) {
             val imageView = _binding?.appbarLayout?.findViewById<NetworkImageView>(R.id.imageView)
-            volley.imageLoader.get(avatarUrl, ImageLoader.getImageListener(imageView,
-                R.drawable.ic_launcher_background, android.R.drawable
-                    .ic_dialog_alert));
+            volley.imageLoader.get(
+                avatarUrl, ImageLoader.getImageListener(
+                    imageView,
+                    R.drawable.ic_launcher_background, android.R.drawable
+                        .ic_dialog_alert
+                )
+            );
             imageView?.setImageUrl(avatarUrl, volley.imageLoader);
         }
 
@@ -122,11 +122,6 @@ class GraphFragment : Fragment() {
             recyclerView.adapter = mAdapter
         }
     }
-
-
-
-
-
 
 
     override fun onDestroyView() {

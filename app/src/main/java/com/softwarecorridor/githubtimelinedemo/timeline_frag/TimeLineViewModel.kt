@@ -16,14 +16,15 @@ import java.nio.charset.StandardCharsets
 
 private const val TAG = "TimeLineViewModel"
 
-class TimeLineViewModel(private val volley : VolleySingleton, private val reposUrl : String) : ViewModel() {
-    private val repoList : MutableLiveData<List<RepoModel>> by lazy {
+class TimeLineViewModel(private val volley: VolleySingleton, private val reposUrl: String) :
+    ViewModel() {
+    private val repoList: MutableLiveData<List<RepoModel>> by lazy {
         MutableLiveData<List<RepoModel>>().also {
             loadRepos()
         }
     }
 
-    fun getRepos() : LiveData<List<RepoModel>> {
+    fun getRepos(): LiveData<List<RepoModel>> {
         return repoList
     }
 
