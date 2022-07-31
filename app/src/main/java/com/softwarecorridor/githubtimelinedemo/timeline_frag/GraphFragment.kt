@@ -11,6 +11,8 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,38 +50,13 @@ class GraphFragment : Fragment() {
     ): View? {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
+
         val name = arguments?.getString("name")
         val email = arguments?.getString("email")
         val location = arguments?.getString("location")
         val avatarUrl = arguments?.getString("avatar_url")
         val reposUrl = arguments?.getString("repos_url")
         val volley = VolleySingleton.getInstance(requireContext().applicationContext)
-
-        if (reposUrl != null) {
-            val prefix = "https://api.github.com/users/"
-            val stringRequest = StringRequest(
-                Request.Method.GET, reposUrl,
-                { response ->
-                    val repos = parseVolleyResponse(response)
-                    if (mAdapter != null) {
-                        val sortedRepo = repos.sortedWith(compareBy({ it.createTime }));
-                        mAdapter.updateRepoList(sortedRepo)
-
-
-                    }
-                }) {
-                parseVolleyError(it)
-            }
-            volley.addToRequestQueue(stringRequest)
-        }
-
-        if (avatarUrl != null) {
-            val imageView = _binding?.appbarLayout?.findViewById<NetworkImageView>(R.id.imageView)
-            volley.imageLoader.get(avatarUrl, ImageLoader.getImageListener(imageView,
-                R.drawable.ic_launcher_background, android.R.drawable
-                    .ic_dialog_alert));
-            imageView?.setImageUrl(avatarUrl, volley.imageLoader);
-        }
 
 
         //TODO: display name and icon at the top
@@ -116,6 +93,24 @@ class GraphFragment : Fragment() {
 
         initRecyclerListView(_binding?.recyclerView)
 
+
+        if (reposUrl != null) {
+            // TODO: handle null better
+            val timelineViewModel : TimeLineViewModel by viewModels { TimeLineViewModelFactory(volley, reposUrl) }
+            timelineViewModel.getRepos().observe(this, Observer<List<RepoModel>>{
+                    list -> mAdapter.updateRepoList(list)
+            })
+        }
+
+        if (avatarUrl != null) {
+            val imageView = _binding?.appbarLayout?.findViewById<NetworkImageView>(R.id.imageView)
+            volley.imageLoader.get(avatarUrl, ImageLoader.getImageListener(imageView,
+                R.drawable.ic_launcher_background, android.R.drawable
+                    .ic_dialog_alert));
+            imageView?.setImageUrl(avatarUrl, volley.imageLoader);
+        }
+
+
         return binding.root
     }
 
@@ -129,36 +124,10 @@ class GraphFragment : Fragment() {
     }
 
 
-    private fun parseVolleyResponse(response: String): ArrayList<RepoModel> {
-        val list = ArrayList<RepoModel>()
-
-        val data = JSONArray(response)
-        for (i in 0 until data.length()) {
-            val repoData = data.getJSONObject(i)
-            list.add(
-                RepoModel(
-                    repoData.getString("name"),
-                    repoData.getString("description"),
-                    repoData.getString("created_at"),
-                    repoData.getString("updated_at")
-                )
-            )
-        }
-
-        return list
-    }
 
 
-    private fun parseVolleyError(error: VolleyError) {
-        try {
-            val responseBody = String(error.networkResponse.data, StandardCharsets.UTF_8)
-            val data = JSONObject(responseBody)
-            val message = data.getString("message")
-            Log.d(TAG, message)
-        } catch (e: JSONException) {
-            Log.e(TAG, "parseVolleyError", e)
-        }
-    }
+
+
 
     override fun onDestroyView() {
         super.onDestroyView()
