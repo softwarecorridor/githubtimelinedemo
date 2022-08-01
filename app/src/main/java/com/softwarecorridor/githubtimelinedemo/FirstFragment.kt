@@ -73,11 +73,13 @@ class FirstFragment : Fragment() {
     }
 
     private fun performUserQuery(userInput: String) {
+        _binding?.progressBar?.visibility = View.VISIBLE
         Log.d(TAG, "string: $userInput")
         val prefix = "https://api.github.com/users/"
         val stringRequest = StringRequest(
             Request.Method.GET, "$prefix$userInput",
             { response ->
+                _binding?.progressBar?.visibility = View.GONE
                 val responses = parseVolleyResponse(response)
                 responses.putString("name", userInput)
                 view?.findNavController()?.navigate(
@@ -113,6 +115,7 @@ class FirstFragment : Fragment() {
             val data = JSONObject(responseBody)
             val message = data.getString("message")
             Log.d(TAG, message)
+            _binding?.progressBar?.visibility = View.GONE
             _binding?.tvUserWarning?.visibility = View.VISIBLE
         } catch (e: JSONException) {
             Log.e(TAG, "parseVolleyError", e)
