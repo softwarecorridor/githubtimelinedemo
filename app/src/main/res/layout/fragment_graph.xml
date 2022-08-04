@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <data />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:padding="2dp"
-        android:clipToPadding="false"
-        tools:listitem="@layout/timeline_item"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbarLayout"
-        android:layout_height="200dp"
-        android:layout_width="match_parent"
-        android:background="@color/purple_200">
-
-        <include layout="@layout/coordinatorlayout_graph_toolbar" />
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_height="match_parent">
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:clipToPadding="false"
+            android:padding="2dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:listitem="@layout/timeline_item" />
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/purple_200">
+
+            <include layout="@layout/coordinatorlayout_graph_toolbar" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

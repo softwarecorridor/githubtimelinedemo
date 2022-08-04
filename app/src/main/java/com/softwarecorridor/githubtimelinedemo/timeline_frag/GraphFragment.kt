@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -16,9 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.NetworkImageView
 import com.softwarecorridor.githubtimelinedemo.R
-import com.softwarecorridor.githubtimelinedemo.databinding.FragmentGraphBinding
 import com.softwarecorridor.githubtimelinedemo.network.VolleySingleton
-
+import com.softwarecorridor.githubtimelinedemo.databinding.FragmentGraphBinding
 
 private const val TAG = "GraphFragment"
 
@@ -37,7 +37,7 @@ class GraphFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentGraphBinding.inflate(inflater, container, false)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_graph, container, false)
 
 
         val name = arguments?.getString("name")
