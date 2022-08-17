@@ -1,4 +1,4 @@
-package com.softwarecorridor.githubtimelinedemo
+package com.softwarecorridor.githubtimelinedemo.query_frag
 
 import android.os.Bundle
 import android.util.Log
@@ -9,11 +9,14 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
+import com.softwarecorridor.githubtimelinedemo.R
 import com.softwarecorridor.githubtimelinedemo.databinding.FragmentFirstBinding
 import com.softwarecorridor.githubtimelinedemo.network.VolleySingleton
 import org.json.JSONException
@@ -37,8 +40,9 @@ class FirstFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        val model : QueryFragViewModel by viewModels()
+        _binding  = DataBindingUtil.inflate(inflater, R.layout.fragment_first, container, false)
+        binding.viewmodel = model
         binding.etUserInput.addTextChangedListener { text ->
             _binding?.tvUserWarning?.visibility = View.INVISIBLE
         }
@@ -73,11 +77,13 @@ class FirstFragment : Fragment() {
     }
 
     private fun performUserQuery(userInput: String) {
+        _binding?.progressBar?.visibility = View.VISIBLE
         Log.d(TAG, "string: $userInput")
         val prefix = "https://api.github.com/users/"
         val stringRequest = StringRequest(
             Request.Method.GET, "$prefix$userInput",
             { response ->
+                _binding?.progressBar?.visibility = View.GONE
                 val responses = parseVolleyResponse(response)
                 responses.putString("name", userInput)
                 view?.findNavController()?.navigate(
@@ -113,6 +119,7 @@ class FirstFragment : Fragment() {
             val data = JSONObject(responseBody)
             val message = data.getString("message")
             Log.d(TAG, message)
+            _binding?.progressBar?.visibility = View.GONE
             _binding?.tvUserWarning?.visibility = View.VISIBLE
         } catch (e: JSONException) {
             Log.e(TAG, "parseVolleyError", e)
